@@ -7,9 +7,8 @@ import dotenv from "dotenv";
 
 export const signup = async (req,res,next)=>{
 
-
     try{
-        const user = await User.findOne({email: req.body.email});
+        const user = await User.findOne({name: req.body.name, email: req.body.email});
 
         if(user) { return next(createError(403, "user already exists"))}
 
@@ -27,13 +26,14 @@ export const signup = async (req,res,next)=>{
 }
 
 export const signin = async (req,res,next)=>{
+
     try {
-        const user = await User.findOne({name: req.body.name})
+        const user = await User.findOne({name: req.body.name, email: req.body.email})
 
         if(!user) return next(createError(404, "user not found!"));
 
 
-        const isCorrect = await bcrypt.compare(req.body.password, user.password);
+        const isCorrect = bcrypt.compare(req.body.password, user.password);
 
         if(!isCorrect) next(createError(400, "wrong credential"));
 
